@@ -1,0 +1,120 @@
+.parent {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: -5%;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.block a {
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:5px 0;
+    text-decoration: none;
+}
+
+.fieldPoint {
+    width: 9.09%;
+    border:1px solid black;
+    background: white;
+    float: left;
+    aspect-ratio: 1 / 1;
+    margin-top:-1px;
+    margin-left:-1px;
+}
+
+a.fieldPoint:hover {
+    background:#3366FF;
+}
+
+.fieldChars {
+    width: 9.09%;
+    aspect-ratio: 1 / 1;
+    float: left;
+    background: white;
+    text-align:center;
+    margin-top:-1px;
+    margin-left:-1px;
+}
+
+.player-ships {
+    width: 100%;
+    float: left;
+    padding:12px 12px 0 0;
+    text-align:right;
+    font-weight:bold;
+}
+
+.player-ships span {
+    color:red;
+}
+
+@media (min-width: 400px) {
+    .fieldChars {
+        padding-top:3%;
+        font-size:14px;
+    }
+}
+
+@media (min-width: 768px) {
+    .fieldChars {
+        padding-top:3%;
+        font-size:14px;
+    }
+}
+
+@media (min-width: 992px) {
+    .fieldChars {
+        padding-top:2%;
+        font-size:14px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .fieldChars {
+        padding-top:2.5%;
+        font-size:16px;
+    }
+}
+
+.btn-wrapper {
+    margin-top:15px;
+}
+
+#point1 {
+    background: yellow;
+}
+
+#point3 {
+    background: #CCFFFF;
+    pointer-events: none;
+    cursor: default;
+}
+
+#point4 {
+    background: red;
+    pointer-events: none;
+    cursor: default;
+}
+
+#point5 {
+    background: #666;
+    pointer-events: none;
+    cursor: default;
+}
+
+#point6 {
+    background: #CCFFFF;
+    pointer-events: none;
+    cursor: default;
+}
+
+#disabled {
+    pointer-events:none;
+    cursor:default;
+    opacity:0.67;
+}
