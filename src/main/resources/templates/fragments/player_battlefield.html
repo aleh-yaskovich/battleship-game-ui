@@ -1,0 +1,11 @@
+<div class="fieldChars"></div>
+<div class="fieldChars"
+     th:each="literal : ${literals}"
+     th:text="${literal}">A</div>
+
+<div th:each="point,iterStat : ${points}">
+  <div class="fieldChars"
+       th:if="${iterStat.index}%10 == 0 OR ${iterStat.count} == 1"
+       th:text=${iterStat.index}/10+1>0</div>
+  <div class="fieldPoint" th:attr="id=point+${point}"></div>
+</div>
