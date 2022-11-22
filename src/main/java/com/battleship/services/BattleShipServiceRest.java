@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.UUID;
+
 @Service
 public class BattleShipServiceRest {
     private static final String URL = "http://localhost:8080/";
@@ -18,5 +20,9 @@ public class BattleShipServiceRest {
         ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
                 URL + "single_player/preparing/random_battlefield", preparingModel, GameModelUI.class);
         return responseEntity.getBody();
+    }
+
+    public void deleteGameModel(UUID gameModelId) {
+        restTemplate.getForEntity(URL + "single_player/delete_game_model/" + gameModelId, ResponseEntity.class);
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.UUID;
+
 @Controller
 public class BattleShipUIController {
 
@@ -51,9 +53,23 @@ public class BattleShipUIController {
 
     @GetMapping("/single_player/game")
     public String getSinglePlayerGame(Model model) {
+        if(gameModelUI == null || gameModelUI.getPlayerModelUI() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+            return "redirect:/single_player";
+        }
         model.addAttribute("enemyPoints", new int[100]);
-        model.addAttribute("points", new int[100]);
+        model.addAttribute("points", gameModelUI.getPlayerModelUI().getBattleField());
         model.addAttribute("literals", LITERALS);
+        model.addAttribute("gameModel", gameModelUI);
         return "single_player_game";
+    }
+
+    @GetMapping("/single_player/restart")
+    public String backToSinglePlayer() {
+        UUID gameModelId = gameModelUI.getGameModelId();
+        serviceRest.deleteGameModel(gameModelId);
+        gameModelUI = null;
+        return "redirect:/single_player";
     }
 }

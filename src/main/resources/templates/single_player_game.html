@@ -23,7 +23,7 @@
 <div class="container" style="margin-top:30px">
     <div class="row">
 
-        <div class="col-md-12 col-lg-5" style="margin-bottom:40px">
+        <div class="col-md-12 col-lg-5" id="enemy_battlefield" style="margin-bottom:40px">
 
             <div class="fieldChars"></div>
             <div class="fieldChars"
@@ -37,26 +37,14 @@
                    onclick="playerDoHit($(this).attr('href'));"></a>
             </div>
 
-            <div class="player-ships">BOT: <span>10</span></div>
+            <div class="player-ships"><strong id="enemy_name">BOT</strong>: <span id="_enemy">10</span></div>
         </div>
 
         <div class="col-md-12 col-lg-2"></div>
 
         <div class="col-md-12 col-lg-5" style="margin-bottom:50px">
-
-            <div class="fieldChars"></div>
-            <div class="fieldChars"
-                 th:each="literal : ${literals}"
-                 th:text="${literal}">A</div>
-
-            <div th:each="point,iterStat : ${points}">
-                <div class="fieldChars"
-                     th:if="${iterStat.index}%10 == 0 OR ${iterStat.count} == 1"
-                     th:text=${iterStat.index}/10+1>0</div>
-                <div class="fieldPoint"></div>
-            </div>
-
-            <div class="player-ships">OLEG: <span>10</span></div>
+            <div th:insert="fragments/player_battlefield.html :: div"></div>
+            <div class="player-ships"><strong id="player_name">PLAYER</strong>: <span id="_player">10</span></div>
         </div>
     </div>
 </div>
@@ -71,17 +59,16 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
 </script>
-
-<script>
-  // после загрузки страницы
-  // window.addEventListener('load', function () {
-  // элемент, содержащий контент модального окна (например, имеющий id="modal")
-  // const elemModal = document.querySelector('#exampleModal');
-  // активируем элемент в качестве модального окна с параметрами по умолчанию
-  // const modal = new bootstrap.Modal(elemModal);
-  // откроем модальное окно
-  // modal.show();
-  //});
+<script src="/js/modal.js"></script>
+<script th:inline="javascript">
+  var socket = new SockJS('http://localhost:8080/ws-connect');
+  stompClient = Stomp.over(socket);
+  stompClient.connect({}, function() {
+        stompClient.subscribe('/topic/game', function(gameModelUI) {
+            makeHit(JSON.parse(gameModelUI.body));
+        });
+    });
+  getGameModel([[${gameModel}]]);
 </script>
 
 </body>

@@ -118,3 +118,8 @@ a.fieldPoint:hover {
     cursor:default;
     opacity:0.67;
 }
+
+#dis {
+    pointer-events:none;
+    cursor:default;
+}
