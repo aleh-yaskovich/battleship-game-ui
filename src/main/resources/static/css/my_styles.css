@@ -123,3 +123,16 @@ a.fieldPoint:hover {
     pointer-events:none;
     cursor:default;
 }
+
+.dialog {
+    margin-top:20px;
+    padding:0 20px;
+}
+
+#_dialog1 span {
+    color:blue;
+}
+
+#_dialog2 span {
+    color:green;
+}

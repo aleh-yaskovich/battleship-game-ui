@@ -25,7 +25,7 @@ public class BattleShipUIController {
     }
 
     @GetMapping("/single_player")
-    public String getEmptyBattleField(Model model) {
+    public String getSinglePlayerPage(Model model) {
         if(gameModelUI == null || gameModelUI.getPlayerModelUI() == null) {
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
@@ -44,7 +44,7 @@ public class BattleShipUIController {
     }
 
     @PostMapping("/single_player/random_battlefield")
-    public String getRandomBattleField(PreparingModel preparingModel, Model model) {
+    public String getSinglePlayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
         gameModelUI = serviceRest.getRandomBattleFieldModel(preparingModel);
         model.addAttribute("points", gameModelUI.getPlayerModelUI().getBattleField());
         model.addAttribute("literals", LITERALS);
@@ -71,5 +71,33 @@ public class BattleShipUIController {
         serviceRest.deleteGameModel(gameModelId);
         gameModelUI = null;
         return "redirect:/single_player";
+    }
+
+    @GetMapping("/multiplayer")
+    public String getMultiplayerPage(Model model) {
+        if(gameModelUI == null || gameModelUI.getPlayerModelUI() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+        } else {
+            model.addAttribute("preparingModel",
+                    new PreparingModel(
+                            gameModelUI.getPlayerModelUI().getPlayerId(),
+                            gameModelUI.getPlayerModelUI().getPlayerName()
+                    )
+            );
+            model.addAttribute("points", gameModelUI.getPlayerModelUI().getBattleField());
+        }
+        model.addAttribute("literals", LITERALS);
+        model.addAttribute("gameModel", gameModelUI);
+        return "multiplayer";
+    }
+
+    @GetMapping("/multiplayer/game")
+    public String getMultiplayerGame(Model model) {
+        model.addAttribute("enemyPoints", new int[100]);
+        model.addAttribute("points", new int[100]);
+        model.addAttribute("literals", LITERALS);
+        model.addAttribute("gameModel", gameModelUI);
+        return "multiplayer_game";
     }
 }
