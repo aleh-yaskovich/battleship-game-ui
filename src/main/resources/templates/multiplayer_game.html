@@ -10,9 +10,10 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app_mp.js"></script>
+    <script src="/js/utils.js"></script>
 
-    <title>BattleShips: Single Player</title>
+    <title>BattleShips: Multiplayer</title>
 </head>
 
 <body>
@@ -34,7 +35,7 @@
                      th:if="${iterStat.index}%10 == 0 OR ${iterStat.count} == 1"
                      th:text=${iterStat.index}/10+1>0</div>
                 <a class="fieldPoint" th:href="${iterStat.index}"
-                   onclick="playerDoHit($(this).attr('href'));"></a>
+                   onclick="playerMakesShot($(this).attr('href'));"></a>
             </div>
 
             <div class="player-ships"><strong id="enemy_name">BOT</strong>: <span id="_enemy">10</span></div>
@@ -49,14 +50,11 @@
 
         <div class="col-12" style="margin-top:50px">
             <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Message..." aria-label="Search">
-                <button class="btn btn-success" type="submit">Send</button>
+                <input class="form-control me-2" type="search" placeholder="Message..." aria-label="Search" id="text">
+                <button class="btn btn-success" onclick="sendMessage();">Send</button>
             </form>
         </div>
-        <div class="col-12 dialog">
-            <p id="_dialog1"><span>Oleg [22:54]:</span> <strong>Hello!</strong></p>
-            <p id="_dialog2"><span>Aleh [22:54]:</span> <strong>How are you?</strong></p>
-        </div>
+        <div class="col-12" id="dialog"></div>
 
     </div>
 </div>
@@ -65,22 +63,18 @@
 <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false"
      tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"
      th:insert="fragments/modal.html :: div"></div>
+<div class="modal fade" id="preparingModal" data-bs-backdrop="static" data-bs-keyboard="false"
+     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"
+     th:insert="fragments/preparing_modal.html :: div"></div>
 
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
 </script>
-<script src="/js/modal.js"></script>
 <script th:inline="javascript">
-<!--  var socket = new SockJS('http://localhost:8080/ws-connect');-->
-<!--  stompClient = Stomp.over(socket);-->
-<!--  stompClient.connect({}, function() {-->
-<!--        stompClient.subscribe('/topic/game', function(gameModelUI) {-->
-<!--            makeHit(JSON.parse(gameModelUI.body));-->
-<!--        });-->
-<!--    });-->
-<!--  getGameModel([[${gameModel}]]);-->
+  gameModel = [[${gameModel}]];
+  getGameModel(gameModel);
 </script>
 
 </body>

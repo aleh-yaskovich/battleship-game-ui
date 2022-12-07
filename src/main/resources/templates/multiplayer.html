@@ -10,9 +10,9 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app_mp.js"></script>
 
-    <title>BattleShips: Single Player</title>
+    <title>BattleShips: Multiplayer</title>
 </head>
 
 <body>
@@ -30,7 +30,7 @@
         <div class="col-sm-12 col-md-4 col-lg-4" style="padding-top:30px">
 
             <form th:object="${preparingModel}"
-                  th:action="@{../single_player/random_battlefield}"
+                  th:action="@{../multiplayer/random_battlefield}"
                   th:method="@{post}">
                 <input id="field_playerId" type="hidden" th:field="*{playerId}" />
                 <input placeholder="Write your name..." id="field_playerName" type="text"
@@ -42,11 +42,11 @@
 
             <div class="btn-wrapper" style="margin-top:40px;">
                 <button type="button" class="btn btn-success btn-lg"
-                        data-bs-toggle="modal" data-bs-target="#exampleModal" id="disabled">Join game!</button>
+                        data-bs-toggle="modal" data-bs-target="#exampleModal" id="_disabled">Join game!</button>
             </div>
             <div class="btn-wrapper" style="margin-top:10px;">
                 <a type="button" class="btn btn-success btn-lg"
-                   th:href="@{../multiplayer/game}">Start new game! </a>
+                   th:href="@{../multiplayer/game}" id="disabled">Start new game! </a>
             </div>
 
         </div>
@@ -63,21 +63,21 @@
             <div class="modal-body">
 
                 <table class="table table-success table-striped">
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td><a href="">join</a></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Aleh Yaskovich</td>
-                        <td><a href="">join</a></td>
+                    <tr th:each="game,iterStat : ${freeGames}">
+                        <th scope="row" th:text="${iterStat.count}">1</th>
+                        <td th:text="${game.playerName}">Mark</td>
+                        <td><a th:href="@{../multiplayer/game/{gameId}(gameId=${game.gameId})}">join</a></td>
                     </tr>
                 </table>
 
-                <!--
-                  <h5>There are no created games now.<br/>You can create your own game<br/>or you can <a href="single_player.html">play with Bot<a></h5>
-                -->
+                <div th:if="${emptyFreeGamesList}">
+                    <h5>There are no created games now.<br/>You can <a th:href="@{../multiplayer/game}">
+                        create your own game</a> or you can
+                        <a th:href="@{../multiplayer/to_single_player/{gameId}(gameId=${gameModel.gameId})}">
+                            play with Bot
+                        </a></h5>
+                </div>
+
 
             </div>
             <div class="modal-footer">

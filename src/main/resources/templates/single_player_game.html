@@ -10,7 +10,8 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app_sp.js"></script>
+    <script src="/js/utils.js"></script>
 
     <title>BattleShips: Single Player</title>
 </head>
@@ -34,7 +35,7 @@
                      th:if="${iterStat.index}%10 == 0 OR ${iterStat.count} == 1"
                      th:text=${iterStat.index}/10+1>0</div>
                 <a class="fieldPoint" th:href="${iterStat.index}"
-                   onclick="playerDoHit($(this).attr('href'));"></a>
+                   onclick="playerMakesShot($(this).attr('href'));"></a>
             </div>
 
             <div class="player-ships"><strong id="enemy_name">BOT</strong>: <span id="_enemy">10</span></div>
@@ -59,15 +60,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
 </script>
-<script src="/js/modal.js"></script>
 <script th:inline="javascript">
-  var socket = new SockJS('http://localhost:8080/ws-connect');
-  stompClient = Stomp.over(socket);
-  stompClient.connect({}, function() {
-        stompClient.subscribe('/topic/game', function(gameModelUI) {
-            makeHit(JSON.parse(gameModelUI.body));
-        });
-    });
   getGameModel([[${gameModel}]]);
 </script>
 

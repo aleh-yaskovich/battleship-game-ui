@@ -7,7 +7,7 @@
             <h4 id="congratulation">Player OLEG won!</h4>
         </div>
         <div class="modal-footer">
-            <a type="button" class="btn btn-secondary" th:href="@{../single_player/restart}">Close</a>
+            <a type="button" class="btn btn-secondary" th:href="@{../{active}/restart(active=${active})}">Close</a>
         </div>
     </div>
 </div>

@@ -113,7 +113,7 @@ a.fieldPoint:hover {
     cursor: default;
 }
 
-#disabled {
+#disabled, #_disabled {
     pointer-events:none;
     cursor:default;
     opacity:0.67;
@@ -124,7 +124,7 @@ a.fieldPoint:hover {
     cursor:default;
 }
 
-.dialog {
+#dialog {
     margin-top:20px;
     padding:0 20px;
 }

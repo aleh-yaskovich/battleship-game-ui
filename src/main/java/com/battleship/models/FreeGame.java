@@ -9,10 +9,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameModelUI {
-
+public class FreeGame {
     private UUID gameId;
-    private PlayerModelUI playerModel;
-    private PlayerModelUI enemyModel;
-    private UUID activePlayer;
+    private String playerName;
 }
