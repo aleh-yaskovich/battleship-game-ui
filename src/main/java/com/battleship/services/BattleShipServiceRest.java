@@ -24,8 +24,9 @@ public class BattleShipServiceRest {
         return responseEntity.getBody();
     }
 
-    public void deleteGameModel(UUID gameModelId) {
+    public boolean deleteGameModel(UUID gameModelId) {
         restTemplate.delete(URL + "single_player/game/" + gameModelId, ResponseEntity.class);
+        return true;
     }
 
     public GameModelUI getRandomBattleFieldModelForMultiplayer(PreparingModel preparingModel) {

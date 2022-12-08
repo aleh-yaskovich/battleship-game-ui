@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +54,7 @@ public class BattleShipUIController {
     }
 
     @PostMapping("/single_player/random_battlefield")
-    public String getSinglePlayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
+    public String getSinglePlayerPageWithRandomBattleField(@RequestBody PreparingModel preparingModel, Model model) {
         gameModelUI = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
         model.addAttribute("literals", LITERALS);
@@ -78,8 +79,10 @@ public class BattleShipUIController {
 
     @GetMapping("/single_player/restart")
     public String backToSinglePlayer() {
-        UUID gameModelId = gameModelUI.getGameId();
-        serviceRest.deleteGameModel(gameModelId);
+        if(gameModelUI != null) {
+            UUID gameModelId = gameModelUI.getGameId();
+            serviceRest.deleteGameModel(gameModelId);
+        }
         gameModelUI = null;
         return "redirect:/single_player";
     }
@@ -116,7 +119,7 @@ public class BattleShipUIController {
     }
 
     @PostMapping("/multiplayer/random_battlefield")
-    public String getMultiplayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
+    public String getMultiplayerPageWithRandomBattleField(@RequestBody PreparingModel preparingModel, Model model) {
         gameModelUI = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
         model.addAttribute("literals", LITERALS);
@@ -159,8 +162,10 @@ public class BattleShipUIController {
 
     @GetMapping("/multiplayer/restart")
     public String backToMultiplayer() {
-        UUID gameModelId = gameModelUI.getGameId();
-        serviceRest.deleteGameModel(gameModelId);
+        if(gameModelUI != null) {
+            UUID gameModelId = gameModelUI.getGameId();
+            serviceRest.deleteGameModel(gameModelId);
+        }
         gameModelUI = null;
         return "redirect:/multiplayer";
     }
