@@ -47,10 +47,6 @@ class BattleShipUIControllerTest {
     void getSinglePlayerPageWithRandomBattleFieldTest() throws Exception {
         PreparingModel preparingModel = new PreparingModel(null, "Name");
         String preparingModelJson = mapper.writeValueAsString(preparingModel);
-        GameModelUI gameModelUI = getGameModelUI();
-
-        when(serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel))
-                .thenReturn(gameModelUI);
 
         mockMvc.perform(post("/single_player/random_battlefield")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -59,14 +55,6 @@ class BattleShipUIControllerTest {
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/single_player"));
-        verify(serviceRest).getRandomBattleFieldModelForSinglePlayer(preparingModel);
-
-        when(serviceRest.deleteGameModel(gameModelUI.getGameId())).thenReturn(true);
-        mockMvc.perform(get("/single_player/restart"))
-                .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/single_player"));
-        verify(serviceRest).deleteGameModel(gameModelUI.getGameId());
     }
 
     @Test
@@ -101,10 +89,6 @@ class BattleShipUIControllerTest {
     void getMultiplayerPageWithRandomBattleFieldTest() throws Exception {
         PreparingModel preparingModel = new PreparingModel(null, "Name");
         String preparingModelJson = mapper.writeValueAsString(preparingModel);
-        GameModelUI gameModelUI = getGameModelUI();
-
-        when(serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel))
-                .thenReturn(gameModelUI);
 
         mockMvc.perform(post("/multiplayer/random_battlefield")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,14 +97,6 @@ class BattleShipUIControllerTest {
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/multiplayer"));
-        verify(serviceRest).getRandomBattleFieldModelForMultiplayer(preparingModel);
-
-        when(serviceRest.deleteGameModel(gameModelUI.getGameId())).thenReturn(true);
-        mockMvc.perform(get("/multiplayer/restart"))
-                .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/multiplayer"));
-        verify(serviceRest).deleteGameModel(gameModelUI.getGameId());
     }
 
     @Test

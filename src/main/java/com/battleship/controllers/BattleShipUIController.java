@@ -54,7 +54,12 @@ public class BattleShipUIController {
     }
 
     @PostMapping("/single_player/random_battlefield")
-    public String getSinglePlayerPageWithRandomBattleField(@RequestBody PreparingModel preparingModel, Model model) {
+    public String getSinglePlayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
+        if(preparingModel == null || preparingModel.getPlayerName() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+            return "redirect:/single_player";
+        }
         gameModelUI = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
         model.addAttribute("literals", LITERALS);
@@ -119,7 +124,12 @@ public class BattleShipUIController {
     }
 
     @PostMapping("/multiplayer/random_battlefield")
-    public String getMultiplayerPageWithRandomBattleField(@RequestBody PreparingModel preparingModel, Model model) {
+    public String getMultiplayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
+        if(preparingModel == null || preparingModel.getPlayerName() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+            return "redirect:/multiplayer";
+        }
         gameModelUI = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
         model.addAttribute("literals", LITERALS);
