@@ -18,21 +18,15 @@ public class BattleShipServiceRest {
     @Autowired
     private RestTemplate restTemplate;
 
-    public GameModelUI getRandomBattleFieldModelForSinglePlayer(PreparingModel preparingModel) {
+    public GameModelUI getRandomBattleFieldModel(PreparingModel preparingModel, String active) {
         ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
-                URL + "single_player/random_battlefield", preparingModel, GameModelUI.class);
+                URL + active + "/random_battlefield", preparingModel, GameModelUI.class);
         return responseEntity.getBody();
     }
 
     public boolean deleteGameModel(UUID gameModelId) {
         restTemplate.delete(URL + "single_player/game/" + gameModelId, ResponseEntity.class);
         return true;
-    }
-
-    public GameModelUI getRandomBattleFieldModelForMultiplayer(PreparingModel preparingModel) {
-        ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
-                URL + "multiplayer/random_battlefield", preparingModel, GameModelUI.class);
-        return responseEntity.getBody();
     }
 
     public List<FreeGame> getFreeGamesList(UUID playerId) {
@@ -45,5 +39,10 @@ public class BattleShipServiceRest {
         ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
                 URL + "multiplayer/game/"+gameId+"/join", gameModelUI, GameModelUI.class);
         return responseEntity.getBody();
+    }
+
+    public boolean saveGame(UUID gameModelId) {
+        restTemplate.getForEntity(URL + "single_player/game/" + gameModelId + "/save", Boolean.class);
+        return true;
     }
 }

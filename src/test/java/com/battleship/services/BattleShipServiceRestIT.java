@@ -41,28 +41,28 @@ class BattleShipServiceRestIT {
         mockServer = MockRestServiceServer.createServer(restTemplate);
     }
 
-    @Test
-    void getRandomBattleFieldModelForSinglePlayerTest() throws Exception {
-        PreparingModel preparingModel = new PreparingModel(null, "Name");
-        String preparingModelJson = mapper.writeValueAsString(preparingModel);
-
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-
-        mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI("http://localhost:8080/single_player/random_battlefield")))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().json(preparingModelJson))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString(expected))
-                );
-
-        GameModelUI actual = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
-        mockServer.verify();
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void getRandomBattleFieldModelForSinglePlayerTest() throws Exception {
+//        PreparingModel preparingModel = new PreparingModel(null, "Name");
+//        String preparingModelJson = mapper.writeValueAsString(preparingModel);
+//
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//
+//        mockServer.expect(ExpectedCount.once(),
+//                        requestTo(new URI("http://localhost:8080/single_player/random_battlefield")))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(content().json(preparingModelJson))
+//                .andRespond(withStatus(HttpStatus.OK)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .body(mapper.writeValueAsString(expected))
+//                );
+//
+//        GameModelUI actual = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
+//        mockServer.verify();
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void deleteGameModelTest() throws Exception {
@@ -77,28 +77,28 @@ class BattleShipServiceRestIT {
         mockServer.verify();
     }
 
-    @Test
-    void getRandomBattleFieldModelForMultiplayerTest() throws Exception {
-        PreparingModel preparingModel = new PreparingModel(null, "Name");
-        String preparingModelJson = mapper.writeValueAsString(preparingModel);
-
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-
-        mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI("http://localhost:8080/multiplayer/random_battlefield")))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().json(preparingModelJson))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString(expected))
-                );
-
-        GameModelUI actual = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
-        mockServer.verify();
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void getRandomBattleFieldModelForMultiplayerTest() throws Exception {
+//        PreparingModel preparingModel = new PreparingModel(null, "Name");
+//        String preparingModelJson = mapper.writeValueAsString(preparingModel);
+//
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//
+//        mockServer.expect(ExpectedCount.once(),
+//                        requestTo(new URI("http://localhost:8080/multiplayer/random_battlefield")))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(content().json(preparingModelJson))
+//                .andRespond(withStatus(HttpStatus.OK)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .body(mapper.writeValueAsString(expected))
+//                );
+//
+//        GameModelUI actual = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
+//        mockServer.verify();
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void joinToMultiplayerGameTest() throws Exception {

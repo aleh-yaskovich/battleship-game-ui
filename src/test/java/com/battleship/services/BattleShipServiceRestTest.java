@@ -27,20 +27,20 @@ class BattleShipServiceRestTest {
     @InjectMocks
     private BattleShipServiceRest serviceRest = new BattleShipServiceRest();
 
-    @Test
-    void getRandomBattleFieldModelForSinglePlayerTest() {
-        PreparingModel preparingModel = new PreparingModel(null, "Name");
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-        String url = "http://localhost:8080/single_player/random_battlefield";
-
-        when(restTemplate.postForEntity(url, preparingModel, GameModelUI.class))
-                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
-        GameModelUI actual = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
-        verify(restTemplate).postForEntity(url, preparingModel, GameModelUI.class);
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void getRandomBattleFieldModelForSinglePlayerTest() {
+//        PreparingModel preparingModel = new PreparingModel(null, "Name");
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//        String url = "http://localhost:8080/single_player/random_battlefield";
+//
+//        when(restTemplate.postForEntity(url, preparingModel, GameModelUI.class))
+//                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
+//        GameModelUI actual = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
+//        verify(restTemplate).postForEntity(url, preparingModel, GameModelUI.class);
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void deleteGameModelTest() {
@@ -51,20 +51,20 @@ class BattleShipServiceRestTest {
         verify(restTemplate).delete(url, ResponseEntity.class);
     }
 
-    @Test
-    void getRandomBattleFieldModelForMultiplayerTest() {
-        PreparingModel preparingModel = new PreparingModel(null, "Name");
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-        String url = "http://localhost:8080/multiplayer/random_battlefield";
-
-        when(restTemplate.postForEntity(url, preparingModel, GameModelUI.class))
-                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
-        GameModelUI actual = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
-        verify(restTemplate).postForEntity(url, preparingModel, GameModelUI.class);
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void getRandomBattleFieldModelForMultiplayerTest() {
+//        PreparingModel preparingModel = new PreparingModel(null, "Name");
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//        String url = "http://localhost:8080/multiplayer/random_battlefield";
+//
+//        when(restTemplate.postForEntity(url, preparingModel, GameModelUI.class))
+//                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
+//        GameModelUI actual = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
+//        verify(restTemplate).postForEntity(url, preparingModel, GameModelUI.class);
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 
     @Test
     void getFreeGamesListTest() {

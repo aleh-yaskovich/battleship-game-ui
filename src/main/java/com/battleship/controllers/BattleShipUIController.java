@@ -3,14 +3,15 @@ package com.battleship.controllers;
 import com.battleship.models.FreeGame;
 import com.battleship.models.GameModelUI;
 import com.battleship.models.PreparingModel;
+import com.battleship.models.SavingGame;
 import com.battleship.services.BattleShipServiceRest;
+import com.battleship.services.KafkaConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,8 @@ public class BattleShipUIController {
     private static final char[] LITERALS = {'A','B','C','D','E','F','G','H','I','J'};
     @Autowired
     private BattleShipServiceRest serviceRest;
+    @Autowired
+    private KafkaConsumerService serviceKafka;
     private GameModelUI gameModelUI;
 
     @GetMapping("/")
@@ -51,45 +54,6 @@ public class BattleShipUIController {
         model.addAttribute("gameModel", gameModelUI);
         model.addAttribute("active", "single_player");
         return "single_player";
-    }
-
-    @PostMapping("/single_player/random_battlefield")
-    public String getSinglePlayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
-        if(preparingModel == null || preparingModel.getPlayerName() == null) {
-            model.addAttribute("preparingModel", new PreparingModel());
-            model.addAttribute("points", new int[100]);
-            return "redirect:/single_player";
-        }
-        gameModelUI = serviceRest.getRandomBattleFieldModelForSinglePlayer(preparingModel);
-        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
-        model.addAttribute("literals", LITERALS);
-        model.addAttribute("active", "single_player");
-        return "redirect:/single_player";
-    }
-
-    @GetMapping("/single_player/game")
-    public String getSinglePlayerGame(Model model) {
-        if(gameModelUI == null || gameModelUI.getPlayerModel() == null) {
-            model.addAttribute("preparingModel", new PreparingModel());
-            model.addAttribute("points", new int[100]);
-            return "redirect:/single_player";
-        }
-        model.addAttribute("enemyPoints", new int[100]);
-        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
-        model.addAttribute("literals", LITERALS);
-        model.addAttribute("gameModel", gameModelUI);
-        model.addAttribute("active", "single_player");
-        return "single_player_game";
-    }
-
-    @GetMapping("/single_player/restart")
-    public String backToSinglePlayer() {
-        if(gameModelUI != null) {
-            UUID gameModelId = gameModelUI.getGameId();
-            serviceRest.deleteGameModel(gameModelId);
-        }
-        gameModelUI = null;
-        return "redirect:/single_player";
     }
 
     @GetMapping("/multiplayer")
@@ -123,35 +87,6 @@ public class BattleShipUIController {
         return "multiplayer";
     }
 
-    @PostMapping("/multiplayer/random_battlefield")
-    public String getMultiplayerPageWithRandomBattleField(PreparingModel preparingModel, Model model) {
-        if(preparingModel == null || preparingModel.getPlayerName() == null) {
-            model.addAttribute("preparingModel", new PreparingModel());
-            model.addAttribute("points", new int[100]);
-            return "redirect:/multiplayer";
-        }
-        gameModelUI = serviceRest.getRandomBattleFieldModelForMultiplayer(preparingModel);
-        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
-        model.addAttribute("literals", LITERALS);
-        model.addAttribute("active", "multiplayer");
-        return "redirect:/multiplayer";
-    }
-
-    @GetMapping("/multiplayer/game")
-    public String getMultiplayerGame(Model model) {
-        if(gameModelUI == null || gameModelUI.getPlayerModel() == null) {
-            model.addAttribute("preparingModel", new PreparingModel());
-            model.addAttribute("points", new int[100]);
-            return "redirect:/multiplayer";
-        }
-        model.addAttribute("enemyPoints", new int[100]);
-        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
-        model.addAttribute("literals", LITERALS);
-        model.addAttribute("gameModel", gameModelUI);
-        model.addAttribute("active", "multiplayer");
-        return "multiplayer_game";
-    }
-
     @GetMapping("/multiplayer/game/{gameId}")
     public String joinToMultiplayerGame(@PathVariable UUID gameId, Model model) {
         gameModelUI = serviceRest.joinToMultiplayerGame(gameId, gameModelUI);
@@ -164,19 +99,83 @@ public class BattleShipUIController {
     }
 
     @GetMapping("/multiplayer/to_single_player/{gameId}")
-    public String redirectToSinglePlayer(@PathVariable UUID gameId, Model model) {
+    public String redirectToSinglePlayer(@PathVariable UUID gameId) {
         serviceRest.deleteGameModel(gameId);
         gameModelUI = null;
         return "redirect:/single_player";
     }
 
-    @GetMapping("/multiplayer/restart")
-    public String backToMultiplayer() {
+    @GetMapping("watching")
+    public String showSavedGamesPage(Model model) {
+        List<SavingGame> savingGames = serviceKafka.getSavedGamesFromKafka();
+        if(savingGames != null && !savingGames.isEmpty()) {
+            model.addAttribute("savingGames", savingGames);
+        } else {
+            model.addAttribute("emptySavingGames", true);
+        }
+        model.addAttribute("active", "watching");
+        return "watch_games_list";
+    }
+
+    @GetMapping("watching/{gameId}")
+    public String getListOfGameModels(@PathVariable UUID gameId, Model model) {
+        List<GameModelUI> gameModelUIList = serviceKafka.getGameModelUIsFromKafka(gameId);
+        model.addAttribute("gameModelUIList", gameModelUIList);
+        model.addAttribute("enemyPoints", new int[100]);
+        model.addAttribute("points",  new int[100]);
+        model.addAttribute("literals", LITERALS);
+        model.addAttribute("active", "watching");
+        return "watch_game";
+    }
+
+    @PostMapping("/{active}/random_battlefield")
+    public String getRandomBattleField(
+            @PathVariable String active, PreparingModel preparingModel, Model model) {
+        if(preparingModel == null || preparingModel.getPlayerName() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+            return "redirect:/single_player";
+        }
+        gameModelUI = serviceRest.getRandomBattleFieldModel(preparingModel, active);
+        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
+        model.addAttribute("literals", LITERALS);
+        model.addAttribute("active", "single_player");
+        return "redirect:/" + active;
+    }
+
+    @GetMapping("/{active}/game")
+    public String getGamePage(@PathVariable String active, Model model) {
+        if(gameModelUI == null || gameModelUI.getPlayerModel() == null) {
+            model.addAttribute("preparingModel", new PreparingModel());
+            model.addAttribute("points", new int[100]);
+            return "redirect:/" + active;
+        }
+        model.addAttribute("enemyPoints", new int[100]);
+        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
+        model.addAttribute("literals", LITERALS);
+        model.addAttribute("gameModel", gameModelUI);
+        model.addAttribute("active", active);
+        return active + "_game";
+    }
+
+    @GetMapping("/{active}/restart")
+    public String backToPreparingPage(@PathVariable String active) {
         if(gameModelUI != null) {
             UUID gameModelId = gameModelUI.getGameId();
             serviceRest.deleteGameModel(gameModelId);
         }
         gameModelUI = null;
-        return "redirect:/multiplayer";
+        return "redirect:/" + active;
+    }
+
+    @GetMapping("{active}/game/{gameId}/save")
+    public String saveGame(@PathVariable String active, @PathVariable UUID gameId) {
+        serviceRest.saveGame(gameId);
+        if(gameModelUI != null) {
+            UUID gameModelId = gameModelUI.getGameId();
+            serviceRest.deleteGameModel(gameModelId);
+        }
+        gameModelUI = null;
+        return "redirect:/" + active;
     }
 }

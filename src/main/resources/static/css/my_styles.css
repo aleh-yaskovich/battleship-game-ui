@@ -17,7 +17,7 @@
     text-decoration: none;
 }
 
-.fieldPoint {
+.fieldPoint, .playerFieldPoint, .enemyFieldPoint {
     width: 9.09%;
     border:1px solid black;
     background: white;
