@@ -42,14 +42,14 @@ class BattleShipServiceRestTest {
 //        assertEquals(expected, actual);
 //    }
 
-    @Test
-    void deleteGameModelTest() {
-        UUID gameId = UUID.randomUUID();
-        String url = "http://localhost:8080/single_player/game/"+gameId;
-
-        serviceRest.deleteGameModel(gameId);
-        verify(restTemplate).delete(url, ResponseEntity.class);
-    }
+//    @Test
+//    void deleteGameModelTest() {
+//        UUID gameId = UUID.randomUUID();
+//        String url = "http://localhost:8080/single_player/game/"+gameId;
+//
+//        serviceRest.deleteGameModel(gameId);
+//        verify(restTemplate).delete(url, ResponseEntity.class);
+//    }
 
 //    @Test
 //    void getRandomBattleFieldModelForMultiplayerTest() {
@@ -79,18 +79,18 @@ class BattleShipServiceRestTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void joinToMultiplayerGameTest() {
-        UUID gameId = UUID.randomUUID();
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-        String url = "http://localhost:8080/multiplayer/game/"+gameId+"/join";
-
-        when(restTemplate.postForEntity(url, new GameModelUI(), GameModelUI.class))
-                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
-        GameModelUI actual = serviceRest.joinToMultiplayerGame(gameId, new GameModelUI());
-        verify(restTemplate).postForEntity(url, new GameModelUI(), GameModelUI.class);
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void joinToMultiplayerGameTest() {
+//        UUID gameId = UUID.randomUUID();
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//        String url = "http://localhost:8080/multiplayer/game/"+gameId+"/join";
+//
+//        when(restTemplate.postForEntity(url, new GameModelUI(), GameModelUI.class))
+//                .thenReturn(new ResponseEntity<>(expected, HttpStatus.OK));
+//        GameModelUI actual = serviceRest.joinToMultiplayerGame(gameId, new GameModelUI());
+//        verify(restTemplate).postForEntity(url, new GameModelUI(), GameModelUI.class);
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 }

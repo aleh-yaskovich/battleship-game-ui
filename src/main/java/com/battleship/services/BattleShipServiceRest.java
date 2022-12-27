@@ -3,6 +3,8 @@ package com.battleship.services;
 import com.battleship.models.FreeGame;
 import com.battleship.models.GameModelUI;
 import com.battleship.models.PreparingModel;
+import com.battleship.models.response.BaseResponse;
+import com.battleship.models.response.GameModelUIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,15 +20,29 @@ public class BattleShipServiceRest {
     @Autowired
     private RestTemplate restTemplate;
 
-    public GameModelUI getRandomBattleFieldModel(PreparingModel preparingModel, String active) {
-        ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
-                URL + active + "/random_battlefield", preparingModel, GameModelUI.class);
-        return responseEntity.getBody();
+    public GameModelUIResponse getRandomBattleFieldModel(PreparingModel preparingModel, String active) {
+        try {
+            return restTemplate.postForEntity(
+                    URL + active + "/random_battlefield", preparingModel, GameModelUIResponse.class).getBody();
+        } catch (Exception e) {
+            return GameModelUIResponse.builder()
+                    .message("Sorry... Failed to connect to the server. " + e.getMessage())
+                    .status(BaseResponse.Status.FAILURE)
+                    .build();
+        }
+
     }
 
-    public boolean deleteGameModel(UUID gameModelId) {
-        restTemplate.delete(URL + "single_player/game/" + gameModelId, ResponseEntity.class);
-        return true;
+    public BaseResponse deleteGameModel(UUID gameModelId) {
+        try {
+            return restTemplate.getForEntity(
+                    URL + "single_player/game/" + gameModelId + "/delete", BaseResponse.class).getBody();
+        } catch (Exception e) {
+            return BaseResponse.builder()
+                    .message("Sorry... Failed to connect to the server. " + e.getMessage())
+                    .status(BaseResponse.Status.FAILURE)
+                    .build();
+        }
     }
 
     public List<FreeGame> getFreeGamesList(UUID playerId) {
@@ -35,14 +51,27 @@ public class BattleShipServiceRest {
         return (List<FreeGame>) responseEntity.getBody();
     }
 
-    public GameModelUI joinToMultiplayerGame(UUID gameId, GameModelUI gameModelUI) {
-        ResponseEntity<GameModelUI> responseEntity = restTemplate.postForEntity(
-                URL + "multiplayer/game/"+gameId+"/join", gameModelUI, GameModelUI.class);
-        return responseEntity.getBody();
+    public GameModelUIResponse joinToMultiplayerGame(UUID gameId, GameModelUI gameModelUI) {
+        try {
+            return restTemplate.postForEntity(
+                    URL + "multiplayer/game/"+gameId+"/join", gameModelUI, GameModelUIResponse.class).getBody();
+        } catch (Exception e) {
+            return GameModelUIResponse.builder()
+                    .message("Sorry... Failed to connect to the server. " + e.getMessage())
+                    .status(BaseResponse.Status.FAILURE)
+                    .build();
+        }
     }
 
-    public boolean saveGame(UUID gameModelId) {
-        restTemplate.getForEntity(URL + "single_player/game/" + gameModelId + "/save", Boolean.class);
-        return true;
+    public BaseResponse saveGame(UUID gameModelId) {
+        try {
+            return restTemplate.getForEntity(
+                    URL + "single_player/game/" + gameModelId + "/save", BaseResponse.class).getBody();
+        } catch (Exception e) {
+            return BaseResponse.builder()
+                    .message("Sorry... Failed to connect to the server. " + e.getMessage())
+                    .status(BaseResponse.Status.FAILURE)
+                    .build();
+        }
     }
 }

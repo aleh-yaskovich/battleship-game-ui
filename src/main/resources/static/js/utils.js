@@ -10,9 +10,9 @@ function updateBattleFields() {
 function endOfTheGame() {
     if(gameModel.playerModel.sizeOfShips == 0 || gameModel.enemyModel.sizeOfShips == 0) {
         if(gameModel.playerModel.sizeOfShips == 0) {
-            showModal(gameModel.enemyModel.playerName);
+            showModal("Player "+ gameModel.enemyModel.playerName.toUpperCase() +" wins!");
         } else {
-            showModal(gameModel.playerModel.playerName);
+            showModal("Player "+ gameModel.playerModel.playerName.toUpperCase() +" wins!");
         }
     }
 }
@@ -31,9 +31,8 @@ function updateEnemyBattlefield(enemyBattleField) {
     }
 }
 
-function showModal(name) {
-    var congratulation = "Player "+ name.toUpperCase() +" won!";
-    document.getElementById('congratulation').innerHTML = congratulation;
+function showModal(text) {
+    document.getElementById('congratulation').innerHTML = text;
     const elemModal = document.querySelector('#exampleModal');
     const modal = new bootstrap.Modal(elemModal);
     modal.show();

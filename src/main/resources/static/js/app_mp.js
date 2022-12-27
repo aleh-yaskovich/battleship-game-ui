@@ -47,6 +47,11 @@ function updateGameModel(gameModelUI) {
     updateBattleFields();
     changeActiveBattleField();
     endOfTheGame();
+    if(gameModel.enemyModel.sizeOfShips == -1) {
+        var text = "Player " + gameModel.enemyModel.playerName.toUpperCase() +
+        " gave up and left the game. Player " + gameModel.playerModel.playerName.toUpperCase() + " wins!";
+        showModal(text);
+    }
 }
 
 function playerMakesShot(shot) {
@@ -54,6 +59,19 @@ function playerMakesShot(shot) {
     var gameId = gameModel.gameId;
     var playerId = gameModel.playerModel.playerId;
     stompClient.send("/app/game/"+gameId+"/player/"+playerId+"/shot/"+shot, {});
+}
+
+function playerGivesUpShowModal() {
+    event.preventDefault();
+    const elemQuitModal = document.querySelector('#quitModal');
+    const quitModal = new bootstrap.Modal(elemQuitModal);
+    quitModal.show();
+}
+
+function playerGivesUp() {
+    var gameId = gameModel.gameId;
+    var playerId = gameModel.playerModel.playerId;
+    stompClient.send("/app/game/"+gameId+"/player/"+playerId+"/quit", {});
 }
 
 function getMessage(outputMessage) {

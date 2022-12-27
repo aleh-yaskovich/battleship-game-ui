@@ -4,6 +4,8 @@ import com.battleship.models.FreeGame;
 import com.battleship.models.GameModelUI;
 import com.battleship.models.PreparingModel;
 import com.battleship.models.SavingGame;
+import com.battleship.models.response.BaseResponse;
+import com.battleship.models.response.GameModelUIResponse;
 import com.battleship.services.BattleShipServiceRest;
 import com.battleship.services.KafkaConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class BattleShipUIController {
     @Autowired
     private KafkaConsumerService serviceKafka;
     private GameModelUI gameModelUI;
+    private String errorMessage;
+    private boolean isError;
 
     @GetMapping("/")
     public String starting() {
@@ -33,11 +37,15 @@ public class BattleShipUIController {
 
     @GetMapping("/single_player")
     public String getSinglePlayerPage(Model model) {
+        showErrorModal(model);
         if(gameModelUI == null || gameModelUI.getPlayerModel() == null) {
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
         } else if(!gameModelUI.getEnemyModel().getPlayerName().equals("Bot")) {
-            serviceRest.deleteGameModel(gameModelUI.getGameId());
+            BaseResponse response = serviceRest.deleteGameModel(gameModelUI.getGameId());
+            if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
+                showErrorModal(model);
+            }
             gameModelUI = null;
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
@@ -62,7 +70,10 @@ public class BattleShipUIController {
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
         } else if(gameModelUI.getEnemyModel().getPlayerName().equals("Bot")) {
-            serviceRest.deleteGameModel(gameModelUI.getGameId());
+            BaseResponse response = serviceRest.deleteGameModel(gameModelUI.getGameId());
+            if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
+                showErrorModal(model);
+            }
             gameModelUI = null;
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
@@ -89,7 +100,13 @@ public class BattleShipUIController {
 
     @GetMapping("/multiplayer/game/{gameId}")
     public String joinToMultiplayerGame(@PathVariable UUID gameId, Model model) {
-        gameModelUI = serviceRest.joinToMultiplayerGame(gameId, gameModelUI);
+        GameModelUIResponse response = serviceRest.joinToMultiplayerGame(gameId, gameModelUI);
+        if(response.getStatus().equals(BaseResponse.Status.SUCCESS)) {
+            gameModelUI = response.getGameModelUI();
+        } else {
+            isError = true;
+            errorMessage = response.getMessage();
+        }
         model.addAttribute("enemyPoints", new int[100]);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
         model.addAttribute("literals", LITERALS);
@@ -99,8 +116,11 @@ public class BattleShipUIController {
     }
 
     @GetMapping("/multiplayer/to_single_player/{gameId}")
-    public String redirectToSinglePlayer(@PathVariable UUID gameId) {
-        serviceRest.deleteGameModel(gameId);
+    public String redirectToSinglePlayer(@PathVariable UUID gameId, Model model) {
+        BaseResponse response = serviceRest.deleteGameModel(gameId);
+        if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
+            showErrorModal(model);
+        }
         gameModelUI = null;
         return "redirect:/single_player";
     }
@@ -136,8 +156,15 @@ public class BattleShipUIController {
             model.addAttribute("points", new int[100]);
             return "redirect:/single_player";
         }
-        gameModelUI = serviceRest.getRandomBattleFieldModel(preparingModel, active);
-        model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
+        GameModelUIResponse response = serviceRest.getRandomBattleFieldModel(preparingModel, active);
+        if(response.getStatus().equals(BaseResponse.Status.SUCCESS)) {
+            gameModelUI = response.getGameModelUI();
+            model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
+        } else {
+            isError = true;
+            errorMessage = response.getMessage();
+            model.addAttribute("points", new int[100]);
+        }
         model.addAttribute("literals", LITERALS);
         model.addAttribute("active", "single_player");
         return "redirect:/" + active;
@@ -178,4 +205,27 @@ public class BattleShipUIController {
         gameModelUI = null;
         return "redirect:/" + active;
     }
-}
+
+    @GetMapping("/{active}/quit")
+    public String quitSinglePlayerGame(@PathVariable String active, Model model) {
+        BaseResponse response = serviceRest.deleteGameModel(gameModelUI.getGameId());
+        if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
+            showErrorModal(model);
+        }
+        if(gameModelUI != null) {
+            UUID gameModelId = gameModelUI.getGameId();
+            serviceRest.deleteGameModel(gameModelId);
+        }
+        gameModelUI = null;
+        return "redirect:/" + active;
+    }
+
+    private void showErrorModal(Model model) {
+        if(isError) {
+            model.addAttribute("errorModal", "true");
+            model.addAttribute("errorMessage", errorMessage);
+            isError = false;
+            errorMessage = null;
+        }
+    }
+ }

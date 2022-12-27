@@ -27,11 +27,7 @@ function getGameModelsArr() {
                     myLoop();
                 } else {
                     gameModel = gameModels[gameModels.length-1];
-                    if(gameModel.playerModel.sizeOfShips == 0) {
-                        showModal(gameModel.enemyModel.playerName.toUpperCase());
-                    } else {
-                        showModal(gameModel.playerModel.playerName.toUpperCase());
-                    }
+                    endOfTheGame();
                 }
             }, 500);
         }

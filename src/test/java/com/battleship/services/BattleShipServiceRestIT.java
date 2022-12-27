@@ -64,18 +64,18 @@ class BattleShipServiceRestIT {
 //        assertEquals(expected, actual);
 //    }
 
-    @Test
-    void deleteGameModelTest() throws Exception {
-        UUID gameModelId = UUID.randomUUID();
-
-        mockServer.expect(ExpectedCount.once(),
-                requestTo(new URI("http://localhost:8080/single_player/game/" + gameModelId)))
-                .andExpect(method(HttpMethod.DELETE))
-                .andRespond(withStatus(HttpStatus.OK));
-
-        serviceRest.deleteGameModel(gameModelId);
-        mockServer.verify();
-    }
+//    @Test
+//    void deleteGameModelTest() throws Exception {
+//        UUID gameModelId = UUID.randomUUID();
+//
+//        mockServer.expect(ExpectedCount.once(),
+//                requestTo(new URI("http://localhost:8080/single_player/game/" + gameModelId)))
+//                .andExpect(method(HttpMethod.DELETE))
+//                .andRespond(withStatus(HttpStatus.OK));
+//
+//        serviceRest.deleteGameModel(gameModelId);
+//        mockServer.verify();
+//    }
 
 //    @Test
 //    void getRandomBattleFieldModelForMultiplayerTest() throws Exception {
@@ -100,25 +100,25 @@ class BattleShipServiceRestIT {
 //        assertEquals(expected, actual);
 //    }
 
-    @Test
-    void joinToMultiplayerGameTest() throws Exception {
-        UUID gameId = UUID.randomUUID();
-        String gameModelUIJson = mapper.writeValueAsString(new GameModelUI());
-        GameModelUI expected = new GameModelUI();
-        expected.setGameId(UUID.randomUUID());
-
-        mockServer.expect(ExpectedCount.once(),
-                        requestTo(new URI("http://localhost:8080/multiplayer/game/"+gameId+"/join")))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().json(gameModelUIJson))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString(expected))
-                );
-
-        GameModelUI actual = serviceRest.joinToMultiplayerGame(gameId, new GameModelUI());
-        mockServer.verify();
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-    }
+//    @Test
+//    void joinToMultiplayerGameTest() throws Exception {
+//        UUID gameId = UUID.randomUUID();
+//        String gameModelUIJson = mapper.writeValueAsString(new GameModelUI());
+//        GameModelUI expected = new GameModelUI();
+//        expected.setGameId(UUID.randomUUID());
+//
+//        mockServer.expect(ExpectedCount.once(),
+//                        requestTo(new URI("http://localhost:8080/multiplayer/game/"+gameId+"/join")))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(content().json(gameModelUIJson))
+//                .andRespond(withStatus(HttpStatus.OK)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .body(mapper.writeValueAsString(expected))
+//                );
+//
+//        GameModelUI actual = serviceRest.joinToMultiplayerGame(gameId, new GameModelUI());
+//        mockServer.verify();
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//    }
 }

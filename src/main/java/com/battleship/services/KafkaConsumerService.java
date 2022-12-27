@@ -31,7 +31,7 @@ public class KafkaConsumerService {
                 getProps(), new StringDeserializer(), new JsonDeserializer<>(SavingGame.class));
 
         consumer.subscribe(Arrays.asList(games));
-        ConsumerRecords<String, SavingGame> records = consumer.poll(Duration.ofMillis(1000));
+        ConsumerRecords<String, SavingGame> records = consumer.poll(Duration.ofMillis(1500));
         for (ConsumerRecord<String, SavingGame> record : records) {
             savingGames.add(record.value());
         }
