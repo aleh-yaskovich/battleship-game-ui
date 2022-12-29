@@ -30,7 +30,6 @@ public class BattleShipServiceRest {
                     .status(BaseResponse.Status.FAILURE)
                     .build();
         }
-
     }
 
     public BaseResponse deleteGameModel(UUID gameModelId) {
