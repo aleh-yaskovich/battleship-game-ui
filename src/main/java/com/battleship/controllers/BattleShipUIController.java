@@ -106,6 +106,7 @@ public class BattleShipUIController {
         } else {
             isError = true;
             errorMessage = response.getMessage();
+            return "redirect:/multiplayer";
         }
         model.addAttribute("enemyPoints", new int[100]);
         model.addAttribute("points", gameModelUI.getPlayerModel().getBattleField());
@@ -140,6 +141,9 @@ public class BattleShipUIController {
     @GetMapping("watching/{gameId}")
     public String getListOfGameModels(@PathVariable UUID gameId, Model model) {
         List<GameModelUI> gameModelUIList = serviceKafka.getGameModelUIsFromKafka(gameId);
+        if(gameModelUIList.isEmpty()) {
+            return "redirect:/watching";
+        }
         model.addAttribute("gameModelUIList", gameModelUIList);
         model.addAttribute("enemyPoints", new int[100]);
         model.addAttribute("points",  new int[100]);
@@ -154,7 +158,7 @@ public class BattleShipUIController {
         if(preparingModel == null || preparingModel.getPlayerName() == null) {
             model.addAttribute("preparingModel", new PreparingModel());
             model.addAttribute("points", new int[100]);
-            return "redirect:/single_player";
+            return "redirect:/" + active;
         }
         GameModelUIResponse response = serviceRest.getRandomBattleFieldModel(preparingModel, active);
         if(response.getStatus().equals(BaseResponse.Status.SUCCESS)) {
@@ -208,13 +212,12 @@ public class BattleShipUIController {
 
     @GetMapping("/{active}/quit")
     public String quitSinglePlayerGame(@PathVariable String active, Model model) {
-        BaseResponse response = serviceRest.deleteGameModel(gameModelUI.getGameId());
-        if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
-            showErrorModal(model);
-        }
-        if(gameModelUI != null) {
+        if(gameModelUI != null && gameModelUI.getGameId() != null) {
             UUID gameModelId = gameModelUI.getGameId();
-            serviceRest.deleteGameModel(gameModelId);
+            BaseResponse response = serviceRest.deleteGameModel(gameModelId);
+            if(response.getStatus().equals(BaseResponse.Status.FAILURE)) {
+                showErrorModal(model);
+            }
         }
         gameModelUI = null;
         return "redirect:/" + active;
