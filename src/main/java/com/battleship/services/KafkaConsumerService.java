@@ -7,6 +7,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.*;
 @Service
 public class KafkaConsumerService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerService.class);
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
     @Value("${spring.kafka.topic.games}")
@@ -25,6 +28,7 @@ public class KafkaConsumerService {
     private String gameModels;
 
     public List<SavingGame> getSavedGamesFromKafka() {
+        LOGGER.debug("getSavedGamesFromKafka() started");
         List<SavingGame> savingGames = new ArrayList<>();
 
         KafkaConsumer<String, SavingGame> consumer = new KafkaConsumer<>(
@@ -40,6 +44,7 @@ public class KafkaConsumerService {
     }
 
     public List<GameModelUI> getGameModelUIsFromKafka(UUID gameId) {
+        LOGGER.debug("getGameModelUIsFromKafka("+gameId+") started");
         List<GameModelUI> gameModelUIList = new ArrayList<>();
 
         KafkaConsumer<String, GameModelUI> consumer = new KafkaConsumer<>(
