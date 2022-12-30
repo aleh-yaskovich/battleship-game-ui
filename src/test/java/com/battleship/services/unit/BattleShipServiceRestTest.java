@@ -1,10 +1,11 @@
-package com.battleship.services;
+package com.battleship.services.unit;
 
 import com.battleship.models.FreeGame;
 import com.battleship.models.GameModelUI;
 import com.battleship.models.PreparingModel;
 import com.battleship.models.response.BaseResponse;
 import com.battleship.models.response.GameModelUIResponse;
+import com.battleship.services.BattleShipServiceRest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
