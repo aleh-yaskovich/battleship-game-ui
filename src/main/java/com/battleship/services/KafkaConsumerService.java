@@ -35,7 +35,7 @@ public class KafkaConsumerService {
                 getProps(), new StringDeserializer(), new JsonDeserializer<>(SavingGame.class));
 
         consumer.subscribe(Arrays.asList(games));
-        ConsumerRecords<String, SavingGame> records = consumer.poll(Duration.ofMillis(1500));
+        ConsumerRecords<String, SavingGame> records = consumer.poll(Duration.ofMillis(4000));
         for (ConsumerRecord<String, SavingGame> record : records) {
             savingGames.add(record.value());
         }
@@ -50,7 +50,7 @@ public class KafkaConsumerService {
         KafkaConsumer<String, GameModelUI> consumer = new KafkaConsumer<>(
                 getProps(), new StringDeserializer(), new JsonDeserializer<>(GameModelUI.class));
         consumer.subscribe(Arrays.asList(gameModels));
-        ConsumerRecords<String, GameModelUI> records = consumer.poll(Duration.ofMillis(2000));
+        ConsumerRecords<String, GameModelUI> records = consumer.poll(Duration.ofMillis(4000));
         for (ConsumerRecord<String, GameModelUI> record : records) {
             GameModelUI gameModelUI = record.value();
             if(gameModelUI.getGameId().equals(gameId)) {
